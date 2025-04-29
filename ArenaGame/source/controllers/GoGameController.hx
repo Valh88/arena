@@ -30,4 +30,10 @@ class GoGameController
 		var damage = player.weapon.generateDamage();
 		anotherPlayer.damageFromPlayer(damage);
 	}
+	public function print() 
+	{
+		trace(mainPlayer.x);
+		trace(mainPlayer.y);
+		trace(mainPlayer.weapon.angle);	
+	}
 }

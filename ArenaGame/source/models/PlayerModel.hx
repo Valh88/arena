@@ -15,6 +15,8 @@ class PlayerModel
 		this.playerId = playerId;
 		this.hp = hp;
 		this.weapon = weapon;
+		this.x = 1000;
+		this.y = 1000;
 	}
 
 	public function shot()
