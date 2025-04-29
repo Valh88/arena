@@ -1,5 +1,17 @@
 package states;
 
+import nape.callbacks.InteractionCallback;
+import nape.callbacks.InteractionType;
+import nape.callbacks.CbEvent;
+import nape.callbacks.InteractionListener;
+import flixel.util.FlxColor;
+import nape.callbacks.CbType;
+import flixel.FlxSprite;
+import nape.dynamics.InteractionFilter;
+import nape.shape.Polygon;
+import nape.phys.BodyType;
+import nape.phys.Body;
+import flixel.addons.nape.FlxNapeSpace;
 import flixel.group.FlxGroup;
 import controllers.GoGameController;
 import view.PlayerView;
@@ -10,10 +22,13 @@ import flixel.FlxState;
 
 class GoGameState extends FlxState
 {
+	public static var OBSTACLE_CBTYPE:CbType = new CbType();
+
 	var _stateController:StateController;
 	var _goGameController:GoGameController;
 	var _mainPlayerView:PlayerView;
 	var _players:FlxGroup;
+	var _obstacles:FlxGroup;
 
 	public function new(stateController:StateController)
 	{
@@ -25,6 +40,7 @@ class GoGameState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+		FlxNapeSpace.init();
 
 		final levelMinX = 0;
 		final levelMaxX = 2000;
@@ -45,6 +61,18 @@ class GoGameState extends FlxState
 
 		_players = new FlxGroup();
 		_addPlayers();
+
+		_obstacles = new FlxGroup();
+		_createObstacle(300, 200, 100, 30);
+		_createObstacle(200, 300, 30, 100);
+		_createObstacle(500, 600, 80, 80);
+		_createObstacle(1200, 400, 400, 100);
+		_createObstacle(700, 1500, 80, 150);
+		_createObstacle(1500, 350, 100, 30);
+		_createObstacle(800, 300, 80, 80);
+		_createObstacle(700, 1350, 100, 30);
+		add(_obstacles);
+		_setupCollisionsObstanclePlayers();
 	}
 
 	override public function update(elapsed:Float):Void
@@ -64,5 +92,39 @@ class GoGameState extends FlxState
 
 			add(_players);
 		}
+	}
+
+	function _createObstacle(x:Float, y:Float, width:Float, height:Float):Void
+	{
+		var body = new Body(BodyType.STATIC);
+		body.position.setxy(x, y);
+
+		var shape = new Polygon(Polygon.rect(0, 0, width, height));
+
+		var obstacleFilter = new InteractionFilter();
+		obstacleFilter.collisionGroup = 1;
+		// obstacleFilter.collisionMask = ~0x0004; // Игнорируем прицел
+
+		shape.filter = obstacleFilter;
+		body.shapes.add(shape);
+		body.cbTypes.add(OBSTACLE_CBTYPE);
+		body.space = FlxNapeSpace.space;
+		var obstacle = new FlxSprite(x, y);
+		obstacle.makeGraphic(Std.int(width), Std.int(height), FlxColor.BROWN);
+		body.userData.opstacle = obstacle;
+		_obstacles.add(obstacle);
+	}
+
+	function _setupCollisionsObstanclePlayers()
+	{
+		var playerObstaclesListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, OBSTACLE_CBTYPE, PlayerView.PLAYER_CBTYPE,
+			_onPlayerObstacles);
+		FlxNapeSpace.space.listeners.add(playerObstaclesListener);
+	}
+
+	function _onPlayerObstacles(cb:InteractionCallback)
+	{
+		var b:Body = cb.int1.castBody;
+		trace(b);
 	}
 }

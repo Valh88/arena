@@ -12,6 +12,8 @@ class GoGameController
 	{
 		var weapon = new WeaponModel("Ak", 10, 20, 200, 30);
 		mainPlayer = new PlayerModel(1, weapon, 100);
+		mainPlayer.x = 1000;
+		mainPlayer.y = 1000;
 
 		players = [];
 	}
@@ -21,5 +23,11 @@ class GoGameController
 		// var weapon = new WeaponModel("Ak", 10, 20, 200, 30);
 		// var player = new PlayerModel(1, weapon, 100);
 		players.push(player);
+	}
+	
+	public function damageToPlayer(player:PlayerModel, anotherPlayer:PlayerModel) 
+	{
+		var damage = player.weapon.generateDamage();
+		anotherPlayer.damageFromPlayer(damage);
 	}
 }

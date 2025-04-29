@@ -16,8 +16,8 @@ class MenuButton extends Box
 		super();
 		this.label.text = text;
 		this.text = text;
-		width = 120;
-		height = 25;
+		width = 200;
+		height = 50;
 		backgroundColor = Color.fromString("plum");
 		style.color = Color.fromString("white");
 		callback = function()

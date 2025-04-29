@@ -27,7 +27,6 @@ class GameMenuState extends FlxState
 		};
 		_gameMenuController.serchGameCallback = function()
 		{
-			// trace("123123123213");
 			_stateController.switchState("go_game");
 		};
 		_gameMenuController.updateButtonCallback();
