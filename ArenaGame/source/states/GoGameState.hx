@@ -78,6 +78,7 @@ class GoGameState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		_goGameController.update(elapsed);
 	}
 
 	function _addPlayers()
