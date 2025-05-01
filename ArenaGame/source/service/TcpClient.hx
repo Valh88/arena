@@ -122,8 +122,8 @@ class TcpClient
 
 	public dynamic function onDataReceived(data:String)
 	{
-		trace('Received: $data');
-		// DataNet.parseData(data);
+		// trace('Received: $data');
+		DataNet.parseData(data);
 	}
 
 	public function send(data:String):Bool

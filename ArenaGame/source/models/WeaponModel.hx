@@ -37,7 +37,8 @@ class WeaponModel
 			}
 		}
 	}
-	public function generateDamage():Int 
+
+	public function generateDamage():Int
 	{
 		return damageMin + Math.floor(Math.random() * (damageMax - damageMin + 1));
 	}

@@ -1,6 +1,6 @@
 defmodule Server.ClientSocketGenserver do
   @moduledoc false
-  alias Credo.CLI.Command.Categories.Output.Json
+  alias Server.RegistryService
   alias Server.ClientSocket
 
   use GenServer
@@ -10,7 +10,6 @@ defmodule Server.ClientSocketGenserver do
     GenServer.start_link(__MODULE__, socket)
   end
 
-  # Инициализация состояния
   @impl true
   def init(%{socket: socket}) do
     on_connect()
@@ -19,19 +18,23 @@ defmodule Server.ClientSocketGenserver do
 
   # Обработка сообщений
   @impl true
-  def handle_info(:loop, %{socket: socket} = state) do
-    ClientSocket.handle_client(%{socket: socket})
+  def handle_info(:loop, state) do
+    ClientSocket.handle_client(state)
     {:noreply, state}
   end
 
   @impl true
   def handle_info({:message, data}, %{socket: socket} = state) do
     json = JSON.encode!(data)
-    IO.puts(json)
     :gen_tcp.send(socket, json <> "\n")
     {:noreply, state}
   end
 
+  def handle_info({:hello, {player_state_pid, player_id}}, %{socket: socket}) do
+    json = JSON.encode!(%{connect: %{user: player_id}})
+    :gen_tcp.send(socket, json <> "\n")
+    {:noreply, %{socket: socket, player_state_pid: player_state_pid}}
+  end
 
   @impl true
   def terminate(reason, %{socket: socket} = _state) do
@@ -44,18 +47,17 @@ defmodule Server.ClientSocketGenserver do
 
   @impl true
   def handle_cast(:on_connect, state) do
-    IO.inspect("New connect")
+    game_pid = RegistryService.lookup("game_id")
+    send(game_pid, {:connect_new_player, self()})
     send(self(), :loop)
     {:noreply, state}
   end
 
-
   @impl true
-  def handle_cast(:on_disconnect, state) do
-    IO.inspect("Client disconnected")
+  def handle_cast(:on_disconnect, %{socket: _socket, player_state_pid: player_state_pid} = state) do
+    send(player_state_pid, :disconect)
     {:stop, :normal, state}
   end
-
 
   def on_connect() do
     GenServer.cast(self(), :on_connect)

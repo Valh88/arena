@@ -7,6 +7,7 @@ class DataNet
 {
 	public static var onConnectFunc:Function;
 	public static var connectNewPlayer:Function;
+	public static var onDisconnectPlayer:Function;
 
 	public static function returnField(data:Dynamic):String
 	{

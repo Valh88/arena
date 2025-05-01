@@ -1,5 +1,7 @@
 package states;
 
+import flixel.FlxBasic;
+import models.PlayerModel;
 import nape.callbacks.InteractionCallback;
 import nape.callbacks.InteractionType;
 import nape.callbacks.CbEvent;
@@ -41,7 +43,7 @@ class GoGameState extends FlxState
 	{
 		super.create();
 		FlxNapeSpace.init();
-
+		FlxG.autoPause = false;
 		final levelMinX = 0;
 		final levelMaxX = 2000;
 		final levelMinY = 0;
@@ -55,6 +57,8 @@ class GoGameState extends FlxState
 
 		var bg = new FlxBackdrop("assets/images/grass_green.png");
 		add(bg);
+
+		_goGameController.addViewAnotherPlayer = this.addOrUpdatePlayer;
 
 		_mainPlayerView = new PlayerView(_goGameController.mainPlayer, true);
 		add(_mainPlayerView);
@@ -72,6 +76,7 @@ class GoGameState extends FlxState
 		_createObstacle(800, 300, 80, 80);
 		_createObstacle(700, 1350, 100, 30);
 		add(_obstacles);
+
 		_setupCollisionsObstanclePlayers();
 	}
 
@@ -79,6 +84,27 @@ class GoGameState extends FlxState
 	{
 		super.update(elapsed);
 		_goGameController.update(elapsed);
+	}
+
+	public function addOrUpdatePlayer(model:PlayerModel)
+	{
+		var found = false;
+		_players.forEach(function(player:FlxBasic)
+		{
+			var pl:PlayerView = cast player;
+			if (model.playerId == pl.playerModel.playerId)
+			{
+				pl.playerModel.x = model.x;
+				pl.playerModel.y - model.y;
+				pl.playerModel.weapon.angle = model.weapon.angle;
+				found = true;
+			}
+		});
+		if (!found)
+		{
+			var view = new PlayerView(model);
+			_players.add(view);
+		}
 	}
 
 	function _addPlayers()

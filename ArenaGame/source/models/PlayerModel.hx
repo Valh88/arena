@@ -24,7 +24,7 @@ class PlayerModel
 		weapon.shot();
 	}
 
-	public function damageFromPlayer(damage:Int, ?whoDamage:PlayerModel) 
+	public function damageFromPlayer(damage:Int, ?whoDamage:PlayerModel)
 	{
 		hp -= damage;
 	}

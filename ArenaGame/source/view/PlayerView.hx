@@ -24,10 +24,13 @@ class PlayerView extends FlxSpriteGroup
 	public static var PLAYER_CBTYPE:CbType = new CbType();
 
 	var _mainPlayer:Bool;
-	var _playerModel:PlayerModel;
+
+	public var playerModel:PlayerModel;
+
 	var _speed:Float = 600;
 	var _targetVelocity:FlxPoint = FlxPoint.get();
 	var _lerpFactor:Float = 0.3;
+	var _lerpFactorOnline = 0.2;
 	var _body:FlxSprite;
 	var _weapon:FlxSprite;
 	var _weaponLength:Float = 30;
@@ -48,11 +51,11 @@ class PlayerView extends FlxSpriteGroup
 	{
 		super();
 		// FlxG.mouse.useSystemCursor = true;
-		_playerModel = playerModel;
+		this.playerModel = playerModel;
 		_mainPlayer = mainPlayer;
-		x = _playerModel.x;
-		y = _playerModel.y;
-		_targetWeaponAngle = _playerModel.weapon.angle;
+		x = playerModel.x;
+		y = playerModel.y;
+		_targetWeaponAngle = playerModel.weapon.angle;
 
 		_body = new FlxSprite(0, 0);
 		_body.makeGraphic(Std.int(_bodyRadius * 2), Std.int(_bodyRadius * 2), FlxColor.TRANSPARENT, true);
@@ -81,9 +84,6 @@ class PlayerView extends FlxSpriteGroup
 	{
 		super.update(elapsed);
 
-		x = _playerModel.x;
-		y = _playerModel.y;
-
 		var halfWidth = width * 0.5;
 		var halfHeight = height * 0.5;
 		if (_physicsBody.position.x < FlxG.worldBounds.x + halfWidth)
@@ -97,20 +97,31 @@ class PlayerView extends FlxSpriteGroup
 
 		if (_mainPlayer)
 		{
-			_playerModel.x = _physicsBody.position.x - _bodyRadius;
-			_playerModel.y = _physicsBody.position.y - _bodyRadius;
-			_playerModel.weapon.angle = _targetWeaponAngle;
+			x = playerModel.x;
+			y = playerModel.y;
+
+			playerModel.x = _physicsBody.position.x - _bodyRadius;
+			playerModel.y = _physicsBody.position.y - _bodyRadius;
+			playerModel.weapon.angle = _targetWeaponAngle;
 			_updateMovement();
 		} else
 		{
-			_targetWeaponAngle = _playerModel.weapon.angle;
+			_targetWeaponAngle = playerModel.weapon.angle;
+
+			var targetX = playerModel.x;
+			var targetY = playerModel.y;
+
+			x = FlxMath.lerp(x, targetX, _lerpFactorOnline);
+			y = FlxMath.lerp(y, targetY, _lerpFactorOnline);
+
+			_physicsBody.position.setxy(x + _bodyRadius, y + _bodyRadius);
 			updateMoveToTarget();
 		}
 		updateWeaponRotation();
 		applySmoothMovement(elapsed);
 		applySmoothWeaponRotation(elapsed);
 
-		if (_mainPlayer && FlxG.mouse.pressed) // Выстрел по ЛКМ
+		if (_mainPlayer && FlxG.mouse.pressed)
 		{
 			shoot();
 		}
@@ -119,8 +130,6 @@ class PlayerView extends FlxSpriteGroup
 	function _updateMovement():Void
 	{
 		_targetVelocity.set(0, 0);
-
-		// Явная проверка WASD + стрелок
 
 		if (FlxG.keys.anyPressed([UP, W]))
 			_targetVelocity.y = -_speed;
@@ -133,31 +142,19 @@ class PlayerView extends FlxSpriteGroup
 
 		if (_targetVelocity.x != 0 && _targetVelocity.y != 0)
 		{
-			_targetVelocity.scale(0.7071); // Диагональная нормализация
+			_targetVelocity.scale(0.7071);
 		}
 	}
 
 	function applySmoothMovement(elapsed:Float):Void
 	{
-		// _physicsBody.velocity.x = FlxMath.lerp(velocity.x, _targetVelocity.x, _lerpFactor);
-		// _physicsBody.velocity.y = FlxMath.lerp(velocity.y, _targetVelocity.y, _lerpFactor);
+		if (_mainPlayer)
+		{
+			var velocityDiff = new Vec2(_targetVelocity.x - _physicsBody.velocity.x, _targetVelocity.y - _physicsBody.velocity.y);
 
-		// _physicsBody.position.x = FlxMath.bound(x, FlxG.worldBounds.x, FlxG.worldBounds.width - width);
-		// _physicsBody.position.y = FlxMath.bound(y, FlxG.worldBounds.y, FlxG.worldBounds.height - height);
-
-		// var targetVel = new Vec2(_targetVelocity.x, _targetVelocity.y);
-		// var currentVel = _physicsBody.velocity;
-
-		// // Плавное изменение скорости через силу (а не прямое присваивание)
-		// var force = (targetVel.sub(currentVel)).mul(_physicsBody.mass * 10);
-		// _physicsBody.force = force;
-		var velocityDiff = new Vec2(_targetVelocity.x - _physicsBody.velocity.x, _targetVelocity.y - _physicsBody.velocity.y);
-
-		// Умножаем на массу тела и коэффициент плавности
-		var force = velocityDiff.mul(_physicsBody.mass * 5.0); // Чем больше коэффициент (10.0), тем резче ускорение
-
-		// Применяем силу
-		_physicsBody.force = force;
+			var force = velocityDiff.mul(_physicsBody.mass * 5.0);
+			_physicsBody.force = force;
+		}
 	}
 
 	function updateWeaponRotation():Void
@@ -217,9 +214,6 @@ class PlayerView extends FlxSpriteGroup
 		}
 	}
 
-	/**
-	 * Прекращает движение к точке
-	 */
 	public function stopMovingToPoint():Void
 	{
 		_moveToTarget = null;
@@ -250,12 +244,8 @@ class PlayerView extends FlxSpriteGroup
 		if (!_canShoot || !_mainPlayer)
 			return;
 
-		// Получаем позицию "кончика" оружия
 		var weaponTip = getWeaponTip();
-
-		// Создаём пулю
-		var bullet = new BulletView(weaponTip.x, weaponTip.y, _weapon.angle // Угол оружия
-		);
+		var bullet = new BulletView(weaponTip.x, weaponTip.y, _weapon.angle);
 
 		_canShoot = false;
 		new FlxTimer().start(_shootCooldown, function(timer:FlxTimer)

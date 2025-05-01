@@ -3,7 +3,6 @@ defmodule Server.TcpListener do
 
   use GenServer
   alias Server.ClientSocketDynamicSupervisor
-  alias Server.ClientSocketGenserver
 
   def start_link(port) do
     GenServer.start_link(__MODULE__, port, name: __MODULE__)
@@ -25,10 +24,8 @@ defmodule Server.TcpListener do
   end
 
   def handle_info(:loop, state) do
-
     {:ok, socket} = :gen_tcp.accept(state)
-    data = ClientSocketDynamicSupervisor.start_child(socket)
-    IO.inspect(data)
+    _data = ClientSocketDynamicSupervisor.start_child(socket)
     :timer.sleep(20)
     send(self(), :loop)
     {:noreply, state}
