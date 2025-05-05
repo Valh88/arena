@@ -9,8 +9,13 @@ defmodule Server.Game.Player do
     :damage,
     :hp,
     :socket_pid,
-    :game_pid
+    :game_pid,
+    :history
   ]
+
+  defp get_server_time(ms) do
+    System.system_time(ms)
+  end
 
   def decode(message) do
     JSON.decode!(message)
@@ -26,8 +31,17 @@ defmodule Server.Game.Player do
     case parse_data(message) do
       {:coordinates, data} ->
         state = %{state | coordinates: {data["x"], data["y"]}, rotation: data["angle"]}
-        send(state.game_pid, {:broadcast, %{player: data}})
+        |> save_current_state_in_history(data["timestamp"])
+        send(state.game_pid, {:broadcast, %{player: %{data | "timestamp" => get_server_time(:millisecond)}}})
         state
     end
+  end
+
+  def save_current_state_in_history(state, client_time) do
+    history =
+      Map.put(state.history, client_time, state)
+      |> Enum.filter(fn {ts_key, _st_value} -> ts_key >= get_server_time(:millisecond) - 250 end)
+      |> Map.new()
+    %{state | history: history}
   end
 end

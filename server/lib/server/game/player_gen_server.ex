@@ -17,7 +17,8 @@ defmodule Server.Game.PlayerGenServer do
       coordinates: {1000, 1000},
       rotation: 0,
       game_pid: game_pid,
-      socket_pid: pid_user_socket
+      socket_pid: pid_user_socket,
+      history: %{}
     }
 
     send(pid_user_socket, {:hello, {self(), player_id}})

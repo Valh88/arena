@@ -43,6 +43,7 @@ class GoGameState extends FlxState
 	{
 		super.create();
 		FlxNapeSpace.init();
+		FlxNapeSpace.drawDebug = true;
 		FlxG.autoPause = false;
 		final levelMinX = 0;
 		final levelMaxX = 2000;
@@ -152,6 +153,6 @@ class GoGameState extends FlxState
 	function _onPlayerObstacles(cb:InteractionCallback)
 	{
 		var b:Body = cb.int1.castBody;
-		trace(b);
+		// trace(b);
 	}
 }

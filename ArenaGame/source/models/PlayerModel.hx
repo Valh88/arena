@@ -1,5 +1,6 @@
 package models;
 
+import service.SyncTime;
 import models.WeaponModel;
 
 class PlayerModel
@@ -9,6 +10,7 @@ class PlayerModel
 	public var weapon:WeaponModel;
 	public var x:Float;
 	public var y:Float;
+	public var timestamp:Float;
 
 	public function new(playerId:Int, weapon:WeaponModel, ?hp:Int = 100)
 	{
@@ -27,5 +29,9 @@ class PlayerModel
 	public function damageFromPlayer(damage:Int, ?whoDamage:PlayerModel)
 	{
 		hp -= damage;
+	}
+
+	public function setAlpha(serverTimeStamp:Float)
+	{
 	}
 }

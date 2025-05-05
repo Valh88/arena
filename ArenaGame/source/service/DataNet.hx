@@ -57,7 +57,8 @@ class DataNet
 						playerId: playerId,
 						x: x,
 						y: y,
-						angle: angle
+						angle: angle,
+						timestamp: Sys.time() * 1000,
 					}
 			};
 		var jsonString = haxe.Json.stringify(data);

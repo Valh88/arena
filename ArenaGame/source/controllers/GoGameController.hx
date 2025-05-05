@@ -1,5 +1,6 @@
 package controllers;
 
+import view.PlayerView;
 import haxe.Constraints.Function;
 import service.DataNet;
 import models.PlayerModel;
@@ -72,6 +73,7 @@ class GoGameController
 				player.x = user.x;
 				player.y = user.y;
 				player.weapon.angle = user.angle;
+				player.timestamp = user.timestamp;
 				exist = true;
 			}
 		}
@@ -93,6 +95,11 @@ class GoGameController
 	{
 		var damage = player.weapon.generateDamage();
 		anotherPlayer.damageFromPlayer(damage);
+	}
+
+	public function sendShot(mainPlayerId:Int, targetPlayer:PlayerView)
+	{
+		var data = {mainPlayerId: mainPlayerId};
 	}
 
 	public function print()

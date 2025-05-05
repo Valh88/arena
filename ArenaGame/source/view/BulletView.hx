@@ -25,10 +25,13 @@ class BulletView extends FlxSprite
 
 	var _speed:Float = 800;
 
-	public function new(x:Float, y:Float, angle:Float)
+	public var playerId:Int;
+
+	public function new(x:Float, y:Float, angle:Float, playerId:Int)
 	{
 		super(x, y);
 
+		this.playerId = playerId;
 		// Графика пули (красный квадрат 5x5)
 		makeGraphic(5, 5, FlxColor.BLACK);
 		FlxSpriteUtil.drawCircle(this, x, y, 2.5, FlxColor.BLACK);
@@ -49,6 +52,7 @@ class BulletView extends FlxSprite
 		FlxG.watch.add(this, "y", "Bullet Y");
 
 		_setupCollisionsBulletObstancles();
+		_setupCollisionBulletPlayer();
 	}
 
 	override public function update(elapsed:Float):Void
@@ -82,7 +86,27 @@ class BulletView extends FlxSprite
 
 	function _onBulletObstancles(cb:InteractionCallback)
 	{
+		// var obt:Body = cb.int2.castBody;
+
 		var b:Body = cb.int1.castBody;
 		b.userData.bullet.kill();
+	}
+
+	function _setupCollisionBulletPlayer()
+	{
+		var bulletPlayersListener = new InteractionListener(CbEvent.BEGIN, InteractionType.COLLISION, BULLET_CBTYPE, PlayerView.PLAYER_CBTYPE,
+			_onCollisionBulletPlayer);
+		FlxNapeSpace.space.listeners.add(bulletPlayersListener);
+	}
+
+	function _onCollisionBulletPlayer(cb:InteractionCallback)
+	{
+		var bullet:Body = cb.int1.castBody;
+		bullet.userData.bullet.kill();
+		bullet.userData.bullet.destroy();
+
+		var playerBody:Body = cb.int2.castBody;
+		var p = playerBody.userData.player;
+		trace(p);
 	}
 }
