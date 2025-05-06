@@ -1,5 +1,6 @@
 package models;
 
+import controllers.GoGameController;
 import service.SyncTime;
 import models.WeaponModel;
 
@@ -11,6 +12,7 @@ class PlayerModel
 	public var x:Float;
 	public var y:Float;
 	public var timestamp:Float;
+	public var mainController:GoGameController;
 
 	public function new(playerId:Int, weapon:WeaponModel, ?hp:Int = 100)
 	{

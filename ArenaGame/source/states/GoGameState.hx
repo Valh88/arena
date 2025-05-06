@@ -1,5 +1,6 @@
 package states;
 
+import view.BulletView;
 import flixel.FlxBasic;
 import models.PlayerModel;
 import nape.callbacks.InteractionCallback;
@@ -60,6 +61,7 @@ class GoGameState extends FlxState
 		add(bg);
 
 		_goGameController.addViewAnotherPlayer = this.addOrUpdatePlayer;
+		_goGameController.spawnBulletFromPlayer = this.spawnBulletFromPlayer;
 
 		_mainPlayerView = new PlayerView(_goGameController.mainPlayer, true);
 		add(_mainPlayerView);
@@ -119,6 +121,14 @@ class GoGameState extends FlxState
 			}
 
 			add(_players);
+		}
+	}
+
+	public function spawnBulletFromPlayer(data:Dynamic) 
+	{
+		if (data.playerId != _mainPlayerView.playerModel.playerId)
+		{
+			var bullet = new BulletView(data.x, data.y, data.angle, data.playerId);
 		}
 	}
 

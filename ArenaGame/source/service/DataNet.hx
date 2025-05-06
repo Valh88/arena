@@ -8,6 +8,7 @@ class DataNet
 	public static var onConnectFunc:Function;
 	public static var connectNewPlayer:Function;
 	public static var onDisconnectPlayer:Function;
+	public static var shotFromPlayer:Function;
 
 	public static function returnField(data:Dynamic):String
 	{
@@ -17,6 +18,10 @@ class DataNet
 		} else if (Reflect.hasField(data, "player"))
 		{
 			return "player";
+		}
+		else if (Reflect.hasField(data, "shot"))
+		{
+			return "shot";
 		}
 		return "error";
 	}
@@ -43,8 +48,10 @@ class DataNet
 				connectData(obj.connect);
 			case "player":
 				connectNewPlayer(obj.player);
+			case "shot":
+				shotFromPlayer(obj.shot);
 			case _:
-				trace("noooo");
+				trace(obj);
 		}
 	}
 
@@ -63,5 +70,21 @@ class DataNet
 			};
 		var jsonString = haxe.Json.stringify(data);
 		return jsonString;
+	}
+
+	public static function shot(playerId:Int, x:Float, y:Float, angle:Float):String
+	{
+		var data =
+			{
+				shot:
+					{
+						playerId: playerId,
+						x: x,
+						y: y,
+						angle: angle,
+						timestamp: SyncTime.getTime()
+					}
+			};
+		return haxe.Json.stringify(data);
 	}
 }

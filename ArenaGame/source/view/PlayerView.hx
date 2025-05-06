@@ -246,7 +246,7 @@ class PlayerView extends FlxSpriteGroup
 
 		var weaponTip = getWeaponTip();
 		var bullet = new BulletView(weaponTip.x, weaponTip.y, _weapon.angle, playerModel.playerId);
-
+		playerModel.mainController.sendShot(bullet, _targetWeaponAngle);
 		_canShoot = false;
 		new FlxTimer().start(_shootCooldown, function(timer:FlxTimer)
 		{

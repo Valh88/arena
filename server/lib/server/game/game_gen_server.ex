@@ -30,6 +30,7 @@ defmodule Server.Game.GameGenServer do
 
   def handle_info({:delete, player_id}, state) do
     state = GameLoop.delete_player(state, player_id)
+    #add broadcast TODO
     {:noreply, state}
   end
 

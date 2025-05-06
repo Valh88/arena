@@ -22,8 +22,9 @@ defmodule Server.Game.Player do
   end
 
   def parse_data(message) do
-    if Map.has_key?(message, "coordinates") do
-      {:coordinates, message["coordinates"]}
+    cond do
+      Map.has_key?(message, "coordinates") -> {:coordinates, message["coordinates"]}
+      Map.has_key?(message, "shot") -> {:shot, message["shot"]}
     end
   end
 
@@ -33,6 +34,9 @@ defmodule Server.Game.Player do
         state = %{state | coordinates: {data["x"], data["y"]}, rotation: data["angle"]}
         |> save_current_state_in_history(data["timestamp"])
         send(state.game_pid, {:broadcast, %{player: %{data | "timestamp" => get_server_time(:millisecond)}}})
+        state
+      {:shot, data} ->
+        send(state.game_pid, {:broadcast, %{shot: %{data | "timestamp" => get_server_time(:millisecond) - 50}}})
         state
     end
   end

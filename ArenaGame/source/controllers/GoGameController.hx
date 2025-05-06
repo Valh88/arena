@@ -1,5 +1,8 @@
 package controllers;
 
+import openfl.events.DataEvent;
+import service.SyncTime;
+import view.BulletView;
 import view.PlayerView;
 import haxe.Constraints.Function;
 import service.DataNet;
@@ -19,6 +22,7 @@ class GoGameController
 	public var elapsed:Float;
 
 	public var addViewAnotherPlayer:Function;
+	public var spawnBulletFromPlayer:Function;
 
 	public function new()
 	{
@@ -26,7 +30,7 @@ class GoGameController
 		mainPlayer = new PlayerModel(1, weapon, 100);
 		mainPlayer.x = 1000;
 		mainPlayer.y = 1000;
-
+		mainPlayer.mainController = this;
 		players = [];
 
 		socket = new TcpClient("localhost", 1235);
@@ -38,6 +42,7 @@ class GoGameController
 
 		DataNet.onConnectFunc = connectMainPlayer;
 		DataNet.connectNewPlayer = broadcastUserCoordinates;
+		DataNet.shotFromPlayer = spawnBullet;
 	}
 
 	public function update(elapsed:Float)
@@ -97,9 +102,15 @@ class GoGameController
 		anotherPlayer.damageFromPlayer(damage);
 	}
 
-	public function sendShot(mainPlayerId:Int, targetPlayer:PlayerView)
+	public function sendShot(bullet:BulletView, weaponAngle:Float)
 	{
-		var data = {mainPlayerId: mainPlayerId};
+		var data = DataNet.shot(bullet.playerId, bullet.x, bullet.y, weaponAngle);
+		socket.send(data);
+	}
+
+	public function spawnBullet(data:Dynamic) 
+	{
+		spawnBulletFromPlayer(data);
 	}
 
 	public function print()

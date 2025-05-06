@@ -107,6 +107,6 @@ class BulletView extends FlxSprite
 
 		var playerBody:Body = cb.int2.castBody;
 		var p = playerBody.userData.player;
-		trace(p);
+
 	}
 }
