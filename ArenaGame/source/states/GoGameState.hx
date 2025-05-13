@@ -1,5 +1,6 @@
 package states;
 
+import service.Sounds;
 import view.TreeView;
 import view.ui.Hud;
 import view.BulletView;
@@ -45,6 +46,7 @@ class GoGameState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+		Sounds.init();
 		FlxNapeSpace.init();
 		FlxNapeSpace.drawDebug = true;
 		FlxG.autoPause = false;

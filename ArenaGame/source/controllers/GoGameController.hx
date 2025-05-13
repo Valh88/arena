@@ -29,7 +29,7 @@ class GoGameController
 
 	public function new()
 	{
-		var weapon = new WeaponModel("Ak", 10, 20, 60, 30);
+		var weapon = new WeaponModel("Ak", 10, 20, 60, 20);
 		mainPlayer = new PlayerModel(1, weapon, 100);
 		mainPlayer.x = 1000;
 		mainPlayer.y = 1000;

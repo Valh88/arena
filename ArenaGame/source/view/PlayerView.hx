@@ -1,5 +1,6 @@
 package view;
 
+import service.Sounds;
 import flixel.util.FlxTimer;
 import nape.geom.Vec2;
 import nape.shape.Circle;
@@ -243,21 +244,18 @@ class PlayerView extends FlxSpriteGroup
 	{
 		if (!_canShoot || !_mainPlayer)
 			return;
-		trace(playerModel.weapon.bulletInMagazine);
 		if (playerModel.weapon.countBullets == 0 && playerModel.weapon.bulletInMagazine == 0)
 		{
 			playerModel.mainController.hud.addTextNoBullet("No bullets!!!");
 			_canShoot = false;
 		} else
 		{
-			trace(playerModel.weapon.bulletInMagazine);
 			if (playerModel.weapon.bulletInMagazine <= 1)
 			{
 				_canShoot = false;
 				playerModel.mainController.hud.addTextNoBullet("Reload!!!");
 				new FlxTimer().start(_shootCooldown + 2.0, function(timer:FlxTimer)
 				{
-					trace(timer);
 					_canShoot = true;
 					playerModel.weapon.reload();
 					playerModel.mainController.hud.removeTextNoBullet();
@@ -267,6 +265,7 @@ class PlayerView extends FlxSpriteGroup
 				var weaponTip = getWeaponTip();
 				var bullet = new BulletView(weaponTip.x, weaponTip.y, _weapon.angle, playerModel.playerId);
 				playerModel.mainController.sendShot(bullet, _targetWeaponAngle);
+				Sounds.shot();
 				_canShoot = false;
 				new FlxTimer().start(_shootCooldown, function(timer:FlxTimer)
 				{
