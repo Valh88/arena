@@ -38,7 +38,7 @@ class TcpClient
 			socket.connect(new Host(host), port);
 		} catch (e:Dynamic)
 		{
-			// Это нормально для неблокирующего сокета
+			
 		}
 	}
 
@@ -47,7 +47,7 @@ class TcpClient
 		if (socket == null)
 			return;
 
-		// 1. Проверка состояния подключения
+
 		if (!connected && connecting)
 		{
 			checkConnection();
@@ -55,7 +55,7 @@ class TcpClient
 				return;
 		}
 
-		// 2. Чтение данных
+
 		readAvailableData();
 	}
 

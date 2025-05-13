@@ -24,6 +24,5 @@ class Sounds
 	public static function shot()
 	{
 		_sounds._shot.play(true);
-        trace(_sounds._shot);
 	}
 }
