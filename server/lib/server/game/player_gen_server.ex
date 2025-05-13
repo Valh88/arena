@@ -31,6 +31,7 @@ defmodule Server.Game.PlayerGenServer do
   end
 
   def handle_info(:disconect, state) do
+    IO.puts("disconnect")
     send(state.game_pid, {:delete, state.id})
     {:stop, :normal, state}
   end

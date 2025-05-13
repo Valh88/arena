@@ -74,6 +74,7 @@ class BulletView extends FlxSprite
 		{
 			_physicsBody.space = null;
 		}
+		super.destroy();
 		super.kill();
 	}
 
@@ -107,6 +108,5 @@ class BulletView extends FlxSprite
 
 		var playerBody:Body = cb.int2.castBody;
 		var p = playerBody.userData.player;
-
 	}
 }

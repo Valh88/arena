@@ -45,7 +45,7 @@ class PlayerView extends FlxSpriteGroup
 	var _physicsBody:Body;
 
 	var _canShoot:Bool = true;
-	var _shootCooldown:Float = 0.2;
+	var _shootCooldown:Float = 0.07;
 
 	public function new(playerModel:PlayerModel, ?mainPlayer:Bool = false)
 	{
@@ -243,15 +243,37 @@ class PlayerView extends FlxSpriteGroup
 	{
 		if (!_canShoot || !_mainPlayer)
 			return;
-
-		var weaponTip = getWeaponTip();
-		var bullet = new BulletView(weaponTip.x, weaponTip.y, _weapon.angle, playerModel.playerId);
-		playerModel.mainController.sendShot(bullet, _targetWeaponAngle);
-		_canShoot = false;
-		new FlxTimer().start(_shootCooldown, function(timer:FlxTimer)
+		trace(playerModel.weapon.bulletInMagazine);
+		if (playerModel.weapon.countBullets == 0 && playerModel.weapon.bulletInMagazine == 0)
 		{
-			_canShoot = true;
-		});
+			playerModel.mainController.hud.addTextNoBullet("No bullets!!!");
+			_canShoot = false;
+		} else
+		{
+			trace(playerModel.weapon.bulletInMagazine);
+			if (playerModel.weapon.bulletInMagazine <= 1)
+			{
+				_canShoot = false;
+				playerModel.mainController.hud.addTextNoBullet("Reload!!!");
+				new FlxTimer().start(_shootCooldown + 2.0, function(timer:FlxTimer)
+				{
+					trace(timer);
+					_canShoot = true;
+					playerModel.weapon.reload();
+					playerModel.mainController.hud.removeTextNoBullet();
+				});
+			} else
+			{
+				var weaponTip = getWeaponTip();
+				var bullet = new BulletView(weaponTip.x, weaponTip.y, _weapon.angle, playerModel.playerId);
+				playerModel.mainController.sendShot(bullet, _targetWeaponAngle);
+				_canShoot = false;
+				new FlxTimer().start(_shootCooldown, function(timer:FlxTimer)
+				{
+					_canShoot = true;
+				});
+			}
+		}
 	}
 
 	function _createPhysicsBody()

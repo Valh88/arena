@@ -17,13 +17,19 @@ class WeaponModel
 		this.damageMin = damageMin;
 		this.countBullets = countBullets;
 		this.maxBulletInMagazine = maxBulletInMagazine;
-		this.bulletInMagazine = this.countBullets - this.maxBulletInMagazine;
+		this.countBullets -= this.maxBulletInMagazine;
+		this.bulletInMagazine = this.maxBulletInMagazine;
 		this.angle = 0;
 	}
 
 	public function shot()
 	{
-		bulletInMagazine - 1;
+		if (bulletInMagazine == 0 && countBullets == 0)
+		{
+			return;
+		}
+
+		bulletInMagazine -= 1;
 		if (bulletInMagazine == 0)
 		{
 			if (countBullets <= maxBulletInMagazine)
@@ -35,6 +41,19 @@ class WeaponModel
 				bulletInMagazine = maxBulletInMagazine;
 				countBullets -= maxBulletInMagazine;
 			}
+		}
+	}
+
+	public function reload()
+	{
+		if (countBullets <= maxBulletInMagazine)
+		{
+			bulletInMagazine = countBullets;
+			countBullets = 0;
+		} else
+		{
+			bulletInMagazine = maxBulletInMagazine;
+			countBullets -= maxBulletInMagazine;
 		}
 	}
 

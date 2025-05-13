@@ -18,8 +18,7 @@ class DataNet
 		} else if (Reflect.hasField(data, "player"))
 		{
 			return "player";
-		}
-		else if (Reflect.hasField(data, "shot"))
+		} else if (Reflect.hasField(data, "shot"))
 		{
 			return "shot";
 		}

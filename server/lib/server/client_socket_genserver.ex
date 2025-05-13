@@ -59,6 +59,7 @@ defmodule Server.ClientSocketGenserver do
     {:stop, :normal, state}
   end
 
+
   def on_connect() do
     GenServer.cast(self(), :on_connect)
   end

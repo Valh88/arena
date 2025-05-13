@@ -1,5 +1,6 @@
 package controllers;
 
+import view.ui.Hud;
 import openfl.events.DataEvent;
 import service.SyncTime;
 import view.BulletView;
@@ -24,9 +25,11 @@ class GoGameController
 	public var addViewAnotherPlayer:Function;
 	public var spawnBulletFromPlayer:Function;
 
+	public var hud:Hud;
+
 	public function new()
 	{
-		var weapon = new WeaponModel("Ak", 10, 20, 200, 30);
+		var weapon = new WeaponModel("Ak", 10, 20, 60, 30);
 		mainPlayer = new PlayerModel(1, weapon, 100);
 		mainPlayer.x = 1000;
 		mainPlayer.y = 1000;
@@ -104,11 +107,14 @@ class GoGameController
 
 	public function sendShot(bullet:BulletView, weaponAngle:Float)
 	{
+		mainPlayer.weapon.shot();
+		hud.updateHudWeaponBullets();
+
 		var data = DataNet.shot(bullet.playerId, bullet.x, bullet.y, weaponAngle);
 		socket.send(data);
 	}
 
-	public function spawnBullet(data:Dynamic) 
+	public function spawnBullet(data:Dynamic)
 	{
 		spawnBulletFromPlayer(data);
 	}

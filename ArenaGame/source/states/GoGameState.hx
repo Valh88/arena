@@ -1,5 +1,7 @@
 package states;
 
+import view.TreeView;
+import view.ui.Hud;
 import view.BulletView;
 import flixel.FlxBasic;
 import models.PlayerModel;
@@ -81,6 +83,13 @@ class GoGameState extends FlxState
 		add(_obstacles);
 
 		_setupCollisionsObstanclePlayers();
+
+		var hud = new Hud(_goGameController.mainPlayer);
+		add(hud);
+		_goGameController.hud = hud;
+
+		var tree = new TreeView(FlxG.width / 2 - 10, FlxG.height / 2 - 50);
+		add(tree);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -124,7 +133,7 @@ class GoGameState extends FlxState
 		}
 	}
 
-	public function spawnBulletFromPlayer(data:Dynamic) 
+	public function spawnBulletFromPlayer(data:Dynamic)
 	{
 		if (data.playerId != _mainPlayerView.playerModel.playerId)
 		{
