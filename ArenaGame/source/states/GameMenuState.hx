@@ -1,5 +1,6 @@
 package states;
 
+import view.ui.haxeui.MenuButton;
 import flixel.util.FlxColor;
 import haxe.ui.core.Screen;
 import flixel.FlxG;
@@ -32,6 +33,8 @@ class GameMenuState extends FlxState
 		_gameMenuController.updateButtonCallback();
 		_gameMenuController.updateButtonSearchCallback();
 
+		// var buttonBack = new MenuButton("Back/Disconnect");
+		// add(buttonBack);
 		changeCursor();
 	}
 

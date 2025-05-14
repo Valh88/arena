@@ -9,6 +9,7 @@ class DataNet
 	public static var connectNewPlayer:Function;
 	public static var onDisconnectPlayer:Function;
 	public static var shotFromPlayer:Function;
+	public static  var deletePlayer:Function;
 
 	public static function returnField(data:Dynamic):String
 	{
@@ -21,6 +22,10 @@ class DataNet
 		} else if (Reflect.hasField(data, "shot"))
 		{
 			return "shot";
+		}
+		else  if (Reflect.hasField(data, "deletePlayer"))
+		{
+			return "deletePlayer";
 		}
 		return "error";
 	}
@@ -49,6 +54,8 @@ class DataNet
 				connectNewPlayer(obj.player);
 			case "shot":
 				shotFromPlayer(obj.shot);
+			case "deletePlayer":
+				deletePlayer(obj.deletePlayer);
 			case _:
 				trace(obj);
 		}

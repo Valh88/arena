@@ -66,7 +66,8 @@ class GoGameState extends FlxState
 
 		_goGameController.addViewAnotherPlayer = this.addOrUpdatePlayer;
 		_goGameController.spawnBulletFromPlayer = this.spawnBulletFromPlayer;
-
+		_goGameController.deletePlayerView = this.deletePlayer;
+		
 		_mainPlayerView = new PlayerView(_goGameController.mainPlayer, true);
 		add(_mainPlayerView);
 
@@ -86,12 +87,13 @@ class GoGameState extends FlxState
 
 		_setupCollisionsObstanclePlayers();
 
+		var tree = new TreeView(FlxG.width / 2 - 10, FlxG.height / 2 - 50);
+		add(tree);
+		
 		var hud = new Hud(_goGameController.mainPlayer);
 		add(hud);
 		_goGameController.hud = hud;
 
-		var tree = new TreeView(FlxG.width / 2 - 10, FlxG.height / 2 - 50);
-		add(tree);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -119,6 +121,20 @@ class GoGameState extends FlxState
 			var view = new PlayerView(model);
 			_players.add(view);
 		}
+	}
+
+	public function deletePlayer(model:PlayerModel) 
+	{
+		var found = false;
+		_players.forEach(function(player:FlxBasic)
+		{
+			var pl:PlayerView = cast player;
+			if (model.playerId == pl.playerModel.playerId)
+			{
+				_players.remove(player);
+				found = true;
+			}
+		});
 	}
 
 	function _addPlayers()

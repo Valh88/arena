@@ -47,6 +47,8 @@
 	<haxelib name="nape-haxe4" />
 	<haxelib name="haxeui-core" />
 	<haxelib name="haxeui-openfl" />
+	<!-- <haxelib name="haxeui-flixel" /> -->
+	<haxelib name="openfl" />
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<!--Remove the legacy health system-->

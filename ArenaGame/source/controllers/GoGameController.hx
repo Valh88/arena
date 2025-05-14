@@ -24,6 +24,7 @@ class GoGameController
 
 	public var addViewAnotherPlayer:Function;
 	public var spawnBulletFromPlayer:Function;
+	public var deletePlayerView:Function;
 
 	public var hud:Hud;
 
@@ -46,6 +47,7 @@ class GoGameController
 		DataNet.onConnectFunc = connectMainPlayer;
 		DataNet.connectNewPlayer = broadcastUserCoordinates;
 		DataNet.shotFromPlayer = spawnBullet;
+		DataNet.deletePlayer = deletePlayerCallback;
 	}
 
 	public function update(elapsed:Float)
@@ -94,9 +96,34 @@ class GoGameController
 		}
 	}
 
+	public function deletePlayerCallback(data:Dynamic) 
+	{
+		var player = getPlayer(data.playerId);
+		if (player != null)
+		{
+			deletePlayer(player);
+		}
+	}
+
 	public function addPlayer(player:PlayerModel)
 	{
 		players.push(player);
+	}
+
+	public function deletePlayer(player:PlayerModel) 
+	{
+		players.remove(player);
+		deletePlayerView(player);
+	}
+
+	public function getPlayer(id:Int):PlayerModel 
+	{
+		for (player in players)
+		{
+			if (player.playerId == id)
+				return player;
+		}
+		return null;
 	}
 
 	public function damageToPlayer(player:PlayerModel, anotherPlayer:PlayerModel)

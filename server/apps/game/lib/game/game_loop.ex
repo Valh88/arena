@@ -15,6 +15,13 @@ defmodule Game.GameLoop do
   def delete_player(state, player_id) do
     players = Enum.filter(state.players, fn {_game_player_state, id} -> id != player_id end)
     count_players = state.count_players - 1
+
+    for {game_player_state, id} <- players do
+      if id != player_id do
+        send(game_player_state, {:broadcast, %{deletePlayer: %{playerId: player_id}}})
+      end
+    end
+
     %{state | count_players: count_players, players: players}
   end
 

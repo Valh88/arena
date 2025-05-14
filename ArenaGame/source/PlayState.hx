@@ -22,7 +22,7 @@ class PlayState extends FlxState
 		super.create();
 		FlxG.mouse.visible = true;
 		Toolkit.init();
-
+		
 		bgColor = FlxColor.LIME;
 
 		_stateController = new StateController();

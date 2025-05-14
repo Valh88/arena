@@ -13,7 +13,6 @@ class Sounds
 	{
 		_shot = FlxG.sound.load(AssetPaths.shot__wav);
         _shot.volume = 10.0;
-        trace(_shot);
 	}
 
 	public static function init()
